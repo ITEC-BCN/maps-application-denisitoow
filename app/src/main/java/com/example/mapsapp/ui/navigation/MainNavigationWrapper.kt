@@ -18,7 +18,6 @@ fun MainNavigationWrapper(){
                 navController.navigate(Drawer)
             }
         }
-
         composable<Drawer> {
             DrawerScreen()
         }
