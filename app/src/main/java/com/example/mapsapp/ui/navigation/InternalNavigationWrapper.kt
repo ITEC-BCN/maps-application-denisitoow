@@ -1,31 +1,43 @@
-import androidx.compose.animation.AnimatedContentScope
+package com.example.mapsapp.ui.navigation
+
+
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavType
-import androidx.navigation.compose.*
-import androidx.navigation.navArgument
-import com.example.mapsapp.ui.navigation.Destination.Map
-import com.example.mapsapp.ui.navigation.Destination.List
-import com.example.mapsapp.ui.navigation.Destination.MarkerCreation
-import com.example.mapsapp.ui.navigation.Destination.MarkerDetails
-import com.example.mapsapp.ui.screens.*
-import com.example.mapsapp.ui.navigation.*
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
+import com.example.mapsapp.ui.screens.CreateMarkerScreen
+import com.example.mapsapp.ui.screens.MapScreen
+import com.example.mapsapp.ui.screens.MarkerListScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun InternalNavigationWrapper() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "Map") {
-
-        composable<Map> {
-            MapScreen()
+fun InternalNavigationWrapper(
+    navController: NavHostController,
+    padding: Modifier,
+    function: () -> Unit = {}
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Destination.Map,
+        modifier = padding
+    ) {
+        composable<Destination.Map> {
+            MapScreen{ latLng -> navController.navigate(Destination.MarkerCreation(coordenadas = latLng)) }
         }
-
-        composable<List> { }
-
-        composable<MarkerCreation> { }
-
-        composable<MarkerDetails>{ }
+        composable<Destination.List> { backStackEntry ->
+            MarkerListScreen()
+        }
+        composable<Destination.MarkerCreation> { backStackEntry ->
+            val markerCreation = backStackEntry.toRoute<Destination.MarkerCreation>()
+            CreateMarkerScreen(coordenadas = markerCreation.coordenadas)  {
+                navController.navigate(Destination.Map) {
+                    popUpTo<Destination.Map> { inclusive = true }
+                }
+            }
+        }
     }
 }
-

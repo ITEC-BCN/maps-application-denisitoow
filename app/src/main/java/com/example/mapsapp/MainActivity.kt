@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.ComponentActivity
-import com.example.mapsapp.ui.screens.MapScreen
+import com.example.mapsapp.ui.navigation.MainNavigationWrapper
 import com.example.mapsapp.ui.theme.MapsAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MapsAppTheme {
-                MapScreen()
+                MainNavigationWrapper()
             }
         }
     }

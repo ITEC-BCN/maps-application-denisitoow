@@ -3,8 +3,11 @@ package com.example.mapsapp.ui.screens
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mapsapp.viewmodels.MarkerViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -13,26 +16,50 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun MapScreen(modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxSize()) {
-        val itb = LatLng(41.4534225, 2.1837151)
+fun MapScreen(NavegarAlDetalle: (String) -> Unit) {
+    val markerViewModel: MarkerViewModel = viewModel()
+
+    val markers by markerViewModel.markerList.observeAsState(emptyList())
+
+    // Refrescar solo una vez al entrar en la pantalla
+    LaunchedEffect(Unit) {
+        markerViewModel.refreshMarkers()
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        val initialPosition = LatLng(41.4534225, 2.1837151)
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(itb, 17f)
+            position = CameraPosition.fromLatLngZoom(initialPosition, 17f)
         }
+
         GoogleMap(
-            modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            onMapClick = {
-                Log.d("MAP CLICKED", it.toString())
-            }, onMapLongClick = {
-                Log.d("MAP CLICKED LONG", it.toString())
+            onMapLongClick = { latLng ->
+                val coordenadas = "${latLng.latitude},${latLng.longitude}"
+                NavegarAlDetalle(coordenadas)
             }
-        ){
-            Marker(
-                state = MarkerState(position = itb),
-                title = "ITB",
-                snippet = "Marker at ITB"
-            )
+        ) {
+            markers.forEach { marker ->
+                Log.d("DEBUG_MARKER", "Marcador: ${marker.nombre} - ${marker.latlng}")
+                val latLngParts = marker.latlng.split(",")
+                if (latLngParts.size == 2) {
+                    val lat = latLngParts[0].trim().toDoubleOrNull()
+                    val lon = latLngParts[1].trim().toDoubleOrNull()
+                    if (lat != null && lon != null) {
+                        val position = LatLng(lat, lon)
+                        Marker(
+                            state = MarkerState(position = position),
+                            title = marker.nombre,
+                            snippet = marker.descripcion
+                        )
+                    } else {
+                        Log.e("DEBUG_MARKER", "Error convirtiendo latlng: ${marker.latlng}")
+                    }
+                } else {
+                    Log.e("DEBUG_MARKER", "Formato incorrecto latlng: ${marker.latlng}")
+                }
+            }
         }
     }
 }

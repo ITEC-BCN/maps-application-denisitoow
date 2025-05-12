@@ -109,5 +109,8 @@ fun PermissionsScreen(navegarDrawer : () -> Unit) {
                 Text("Go to settings")
             }
         }
+        else{
+            navegarDrawer()
+        }
     }
 }

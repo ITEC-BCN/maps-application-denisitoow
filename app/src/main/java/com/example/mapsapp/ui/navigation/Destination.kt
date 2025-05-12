@@ -12,7 +12,7 @@ sealed class Destination {
     @Serializable
     object List : Destination()
     @Serializable
-    data class MarkerCreation(val lat: Double, val lon: Double) : Destination()
+    data class MarkerCreation(val coordenadas: String) : Destination()
     @Serializable
-    data class MarkerDetails(val id: String) : Destination()
+    data class MarkerDetails(val id: Int) : Destination()
 }
