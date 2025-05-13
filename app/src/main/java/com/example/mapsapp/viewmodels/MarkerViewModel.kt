@@ -15,14 +15,14 @@ import java.io.ByteArrayOutputStream
 
 class MarkerViewModel : ViewModel() {
 
-    // Acceso al cliente de Supabase desde la clase MyApp (esto es para no estar creando la conexión cada vez)
+    // Acceso al cliente de Supabase
     private val database = MyApp.database
 
-    // Lista de marcadores para observar en la UI
+    // Lista de marcadores
     private val _markerList = MutableLiveData<List<Marker>>()
     val markerList = _markerList
 
-    // Marcador seleccionado (para detalle o edición)
+    // Marcador seleccionado
     private val _selectedMarker = MutableLiveData<Marker?>()
     val selectedMarker = _selectedMarker
 

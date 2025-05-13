@@ -67,7 +67,7 @@ class MySupabaseClient {
             set("nombre", nombre)
             set("descripcion", descripcion)
             set("latlng", latlng)
-            set("image", buildImageUrl(imageFileName = imageResult.path))
+            set("imageUrl", buildImageUrl(imageFileName = imageResult.path))
         }) {
             filter {
                 eq("id", id)

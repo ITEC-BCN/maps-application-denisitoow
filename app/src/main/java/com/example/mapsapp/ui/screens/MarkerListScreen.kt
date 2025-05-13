@@ -1,6 +1,7 @@
 package com.example.mapsapp.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,17 +22,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.viewmodels.MarkerViewModel
 
 @Composable
-fun MarkerListScreen() {
+fun MarkerListScreen(NavegarAlDetalle: (Int) -> Unit) {
     // Aquí obtengo la instancia de mi ViewModel
     val markerViewModel: MarkerViewModel = viewModel()
-
-    // Observo la lista de marcadores como estado (para que Compose se entere de los cambios)
     val markers by markerViewModel.markerList.observeAsState(emptyList())
-
-    // Pido al ViewModel que cargue los marcadores de Supabase
     markerViewModel.refreshMarkers()
 
-    // LazyColumn minimalista, fondo negro, alineación centrada
+    //Pantalla de carga
+    if (markers.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF000000)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color(0xFF6200EE))
+        }
+        return
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -44,7 +53,8 @@ fun MarkerListScreen() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .clickable { NavegarAlDetalle(marker.id) },
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF1F1B24)),
                 elevation = CardDefaults.cardElevation(6.dp)
@@ -56,21 +66,21 @@ fun MarkerListScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Icono de ubicación en morado
+                    // Icono de ubicación
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = null,
                         tint = Color(0xFF6200EE),
                         modifier = Modifier.size(40.dp)
                     )
-                    // Nombre del marcador en morado y negrita, centrado
+                    // Nombre del marcador
                     Text(
                         text = marker.nombre,
                         fontSize = 18.sp,
                         color = Color(0xFF6200EE),
                         fontWeight = FontWeight.Bold
                     )
-                    // Descripción en gris claro, centrado
+                    // Descripción
                     Text(
                         text = marker.descripcion,
                         fontSize = 14.sp,
