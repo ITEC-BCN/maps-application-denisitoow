@@ -174,7 +174,6 @@ fun DetailMarkerScreen(markerId: Int, onBack: () -> Unit) {
         }
     }
 
-    // El diálogo de selección de imagen solo se muestra si showDialog es true
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },

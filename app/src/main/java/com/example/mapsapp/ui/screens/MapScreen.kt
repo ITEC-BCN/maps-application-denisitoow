@@ -30,18 +30,6 @@ fun MapScreen(NavegarAlDetalle: (Int) -> Unit, NavegarACrearMarker: (String) -> 
         markerViewModel.refreshMarkers()
     }
 
-    //Carga los marcadores de Supabase
-    if (markers.isEmpty()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(androidx.compose.ui.graphics.Color(0xFF000000)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(color = androidx.compose.ui.graphics.Color(0xFF6200EE))
-        }
-        return
-    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         val initialPosition = LatLng(41.4534225, 2.1837151)
